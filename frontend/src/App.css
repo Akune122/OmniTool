@@ -1,0 +1,151 @@
+:root {
+  --bg-deep: #050506;       
+  --bg-panel: #0c0c0e;      
+  --border-color: #1f1f24;  
+  --text-main: #d1d5db;     
+  --text-muted: #52525b;    
+  
+  --accent: #00ffcc;        
+  --accent-bg: #091f1b;     
+  
+}
+
+body {
+  margin: 0; padding: 0;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+#App { display: flex; height: 100vh; width: 100vw; }
+
+.sidebar {
+  width: 260px;
+  background-color: var(--bg-deep);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand { padding: 30px 20px; border-bottom: 1px solid var(--border-color); }
+.brand h2 { margin: 0; font-size: 1.3rem; letter-spacing: 3px; font-weight: 900; color: #fff; }
+.version { font-size: 0.7rem; font-family: 'Consolas', monospace; color: var(--accent); letter-spacing: 1px; }
+
+.nav-links { list-style: none; padding: 0; margin: 40px 0; }
+.nav-links li {
+  padding: 15px 20px; cursor: pointer; color: var(--text-muted);
+  font-family: 'Consolas', monospace; font-size: 0.8rem; letter-spacing: 1px; transition: all 0.15s;
+}
+.nav-links li:hover { color: #fff; background-color: #111113; }
+.nav-links li.active { color: var(--accent); background-color: var(--accent-bg); border-left: 2px solid var(--accent); font-weight: bold; }
+
+.main-content { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-deep); }
+.topbar { 
+  padding: 15px 30px; 
+  border-bottom: 1px solid var(--border-color); 
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+}
+.topbar h1 { margin: 0; font-size: 0.85rem; color: var(--text-muted); letter-spacing: 2px; font-weight: 600; }
+
+.drag-region {
+  --wails-draggable: drag;
+  user-select: none;
+}
+.no-drag {
+  --wails-draggable: no-drag;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.window-controls button {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-family: 'Consolas', monospace;
+  font-size: 0.8rem;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 0;
+}
+
+.window-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--accent-bg);
+}
+
+.window-controls .close-btn:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background-color: #240c0c;
+}
+.view-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+
+.control-panel {
+  background-color: var(--bg-panel);
+  padding: 25px; border: 1px solid var(--border-color);
+  display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;
+}
+
+.input-group { display: flex; flex-direction: column; flex: 1; min-width: 220px; }
+.input-group label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px; font-weight: bold; }
+.input-group input, .input-group select {
+  background-color: var(--bg-deep); border: 1px solid #27272a; color: #fff;
+  padding: 10px 12px; font-family: 'Consolas', monospace; font-size: 0.9rem; outline: none; border-radius: 0;
+}
+.input-group input:focus, .input-group select:focus { border-color: var(--accent); }
+
+.checkbox-group { display: flex; align-items: center; gap: 10px; }
+.checkbox-group label { font-size: 0.75rem; color: var(--text-main); font-family: 'Consolas', monospace; cursor: pointer; }
+.checkbox-group input { cursor: pointer; }
+
+.scan-btn {
+  background-color: transparent; color: var(--accent); border: 1px solid var(--accent);
+  padding: 10px 24px; font-family: 'Consolas', monospace; font-size: 0.8rem;
+  letter-spacing: 1px; cursor: pointer; font-weight: bold; border-radius: 0; transition: all 0.2s;
+}
+.scan-btn:hover:not(:disabled) { background-color: var(--accent); color: #000; }
+.scan-btn.scanning { border-color: var(--text-muted); color: var(--text-muted); cursor: not-allowed; }
+.stop-btn { border-color: #ef4444; color: #ef4444; }
+.stop-btn:hover:not(:disabled) { background-color: #ef4444; color: #fff; }
+.manual-btn { border-color: #8b5cf6; color: #8b5cf6; }
+.manual-btn:hover:not(:disabled) { background-color: #8b5cf6; color: #fff; }
+
+
+.results-container { margin-top: 25px; flex: 1; background-color: var(--bg-panel); border: 1px solid var(--border-color); }
+.empty-state { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-muted); font-family: 'Consolas', monospace; font-size: 0.8rem; letter-spacing: 1px; }
+
+.results-table { width: 100%; border-collapse: collapse; text-align: left; }
+.results-table th {
+  background-color: var(--bg-deep); padding: 12px 20px; color: var(--text-muted);
+  font-size: 0.7rem; letter-spacing: 1px; font-weight: normal; border-bottom: 1px solid var(--border-color); position: sticky; top: 0;
+}
+.results-table td { padding: 14px 20px; border-bottom: 1px solid #121214; font-family: 'Consolas', monospace; font-size: 0.85rem; }
+.results-table tr:hover td { background-color: #121215; }
+
+.badge { color: var(--accent); font-weight: bold; }
+.hostname { color: var(--text-muted); font-size: 0.75rem; }
+.mac-text { color: var(--text-muted); font-size: 0.75rem; margin-top: 3px; }
+.banner-cell { color: #a1a1aa; max-width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tab-btn {
+  background: none; border: none; color: var(--text-muted); font-family: 'Consolas', monospace;
+  font-size: 0.8rem; padding: 8px 16px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+}
+.tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); font-weight: bold; }
+
+.action-row-btn {
+  background-color: #1e1e24; color: #fff; border: 1px solid #3f3f46; padding: 4px 12px;
+  font-family: 'Consolas', monospace; font-size: 0.75rem; cursor: pointer;
+}
+.action-row-btn:hover { border-color: var(--accent); color: var(--accent); }
+.action-row-btn.delete-btn { color: #ef4444; border-color: transparent; background: none; }
+.action-row-btn.delete-btn:hover { background-color: #240c0c; }
