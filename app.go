@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -69,7 +70,7 @@ func getConfigPath() string {
 }
 
 func (a *App) LoadSettings() Settings {
-	defaultSettings := Settings{TimeoutMs: 500, MaxThreads: 500, ReduceAnim: false, HighContrast: false, UISize: "Normale (100%)", DefaultExportPath: "C:\\Exports\\NetBuddy", AutoExportFormat: "none"}
+	defaultSettings := Settings{TimeoutMs: 500, MaxThreads: 500, ReduceAnim: false, HighContrast: false, UISize: "Normale (100%)", DefaultExportPath: "C:\\Exports\\OmniTool", AutoExportFormat: "none"}
 	data, err := os.ReadFile(getConfigPath())
 	if err != nil {
 		return defaultSettings
@@ -120,7 +121,9 @@ func (a *App) GetSavedReports(exportPath string) []ReportFile {
 }
 
 func (a *App) OpenReport(filePath string) string {
-	err := exec.Command("cmd", "/c", "start", "", filePath).Start()
+	cmd := exec.Command("cmd", "/c", "start", "", filePath)
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	err := cmd.Start()
 	if err != nil {
 		return "Erreur lors de l'ouverture."
 	}
@@ -140,57 +143,76 @@ func (a *App) GenerateHTMLReport(results []ScanResult, exportPath string) string
 		return "Aucun résultat."
 	}
 	os.MkdirAll(exportPath, os.ModePerm)
-	fileName := filepath.Join(exportPath, fmt.Sprintf("netbuddy_report_%d.html", time.Now().Unix()))
+	fileName := filepath.Join(exportPath, fmt.Sprintf("omnitool_report_%d.html", time.Now().Unix()))
 
 	html := `<!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NetBuddy Report</title>
+    <title>OmniTool // Report</title>
     <style>
-        body { font-family: 'Consolas', monospace; background-color: #0a0a0c; color: #d1d5db; margin: 0; padding: 40px; }
-        h1 { color: #ffffff; border-bottom: 1px solid #1f1f23; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 1.5rem; letter-spacing: 1px; }
-        .summary { background-color: #111115; padding: 20px; border: 1px solid #1f1f23; margin-bottom: 30px; font-size: 0.9rem; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #151518; font-size: 0.85rem; }
-        th { background-color: #111115; color: #6b7280; font-weight: normal; letter-spacing: 1px; }
-        tr:hover { background-color: #111115; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #050506; color: #d1d5db; margin: 0; padding: 40px; }
+        h1 { color: #ffffff; border-bottom: 1px solid #1f1f24; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; letter-spacing: 2px; font-weight: 800; }
+        .summary { background-color: #0c0c0e; padding: 25px; border: 1px solid #1f1f24; margin-bottom: 30px; font-family: 'Consolas', monospace; font-size: 0.85rem; }
+        .summary p { margin: 6px 0; }
+        .accent-text { color: #00ffcc; }
+        table { width: 100%; border-collapse: collapse; margin-top: 25px; background-color: #0c0c0e; border: 1px solid #1f1f24; }
+        th, td { padding: 14px 20px; text-align: left; border-bottom: 1px solid #121214; font-family: 'Consolas', monospace; font-size: 0.85rem; }
+        th { background-color: #050506; color: #52525b; font-size: 0.75rem; letter-spacing: 1px; font-weight: normal; }
+        tr:hover { background-color: #121215; }
         .badge { color: #00ffcc; font-weight: bold; }
-        .mac { color: #4b5563; font-size: 0.8em; }
-        .pdf-btn { background-color: transparent; color: #00ffcc; border: 1px solid #00ffcc; padding: 8px 16px; cursor: pointer; font-family: inherit; font-size: 0.8rem; letter-spacing: 1px; }
+        .hostname { color: #52525b; font-size: 0.75rem; display: block; margin-top: 3px; }
+        .mac-text { color: #52525b; font-size: 0.75rem; margin-top: 3px; }
+        .pdf-btn { background-color: transparent; color: #00ffcc; border: 1px solid #00ffcc; padding: 10px 24px; cursor: pointer; font-family: 'Consolas', monospace; font-size: 0.8rem; letter-spacing: 1px; font-weight: bold; }
         .pdf-btn:hover { background-color: #00ffcc; color: #000; }
+        
+        /* Style du nouveau Footer */
+        .report-footer { margin-top: 50px; border-top: 1px solid #1f1f24; padding-top: 20px; font-family: 'Consolas', monospace; font-size: 0.75rem; color: #52525b; text-align: center; letter-spacing: 1px; }
+        .report-footer a { color: #00ffcc; text-decoration: none; }
+        .report-footer a:hover { text-decoration: underline; }
+
         @media print {
             .pdf-btn { display: none !important; }
             body { background-color: white; color: black; padding: 0; }
             h1 { color: black; border-bottom-color: #000; }
-            .summary, th { background-color: #f3f4f6; border-color: #d1d5db; color: black; }
-            td { border-color: #e5e7eb; color: black; }
+            .summary, th { background-color: #f4f4f5; border-color: #e4e4e7; color: black; }
+            td { border-color: #e4e4e7; color: black; }
             .badge { color: black; }
+            .accent-text { color: black; }
+            .hostname, .mac-text { color: #71717a; }
+            .report-footer { border-top-color: #e4e4e7; color: #71717a; }
+            .report-footer a { color: black; font-weight: bold; }
         }
     </style>
 </head>
 <body>
     <h1>
-        NETBUDDY // AUDIT REPORT
-        <button class="pdf-btn" onclick="window.print()">SAVE TO PDF</button>
+        OMNITOOL // NETWORK RECONNAISSANCE REPORT
+        <button class="pdf-btn" onclick="window.print()">EXPORT TO PDF</button>
     </h1>
     <div class="summary">
-        <p>TIMESTAMP: ` + time.Now().Format("2006-01-02 15:04:05") + `</p>
-        <p>OPEN PORTS IDENTIFIED: ` + strconv.Itoa(len(results)) + `</p>
+        <p>TIMESTAMP: <span class="accent-text">` + time.Now().Format("2006-01-02 15:04:05") + `</span></p>
+        <p>IDENTIFIED TARGETS: <span class="accent-text">` + strconv.Itoa(len(results)) + `</span></p>
     </div>
     <table>
-        <thead><tr><th>TARGET HOST</th><th>PORT</th><th>SERVICE</th><th>OPERATING SYSTEM</th><th>HARDWARE / MAC</th><th>BANNER INFO</th></tr></thead>
+        <thead><tr><th>TARGET HOST</th><th>PORT</th><th>OPERATING SYSTEM</th><th>HARDWARE INFORMATION / MAC</th><th>SERVICE</th><th>BANNER METADATA</th></tr></thead>
         <tbody>`
 
 	for _, r := range results {
-		hostname := ""
-		if r.Hostname != "Inconnu" {
-			hostname = " (" + r.Hostname + ")"
+		hostnameStr := ""
+		if r.Hostname != "-" {
+			hostnameStr = "<span class='hostname'>" + r.Hostname + "</span>"
 		}
-		html += fmt.Sprintf(`<tr><td><strong>%s</strong>%s</td><td><span class="badge">%s</span></td><td>%s</td><td>%s</td><td>%s <span class="mac">[%s]</span></td><td>%s</td></tr>`, r.IP, hostname, r.Port, r.Service, r.OS, r.MAC, r.Vendor, r.Banner)
+		html += fmt.Sprintf(`<tr><td><strong>%s</strong>%s</td><td><span class="badge">OPEN // %s</span></td><td>%s</td><td><div>%s</div><div class="mac-text">%s</div></td><td>%s</td><td>%s</td></tr>`, r.IP, hostnameStr, r.Port, r.OS, r.Vendor, r.MAC, r.Service, r.Banner)
 	}
 
-	html += `</tbody></table></body></html>`
+	html += `</tbody></table>
+    <div class="report-footer">
+        OmniTool // Open-Source Infrastructure Security Intelligence // GitHub: <a href="https://github.com/Akune122/OmniTool" target="_blank">github.com/ZAERCHER-Loic/OmniTool</a>
+    </div>
+</body>
+</html>`
+
 	os.WriteFile(fileName, []byte(html), 0644)
 	return "Rapport généré avec succès."
 }
@@ -198,6 +220,7 @@ func (a *App) GenerateHTMLReport(results []ScanResult, exportPath string) string
 func getHostDetails(ip string) (string, string, string) {
 	mac, vendor, osName := "Inconnu", "Inconnu", "Inconnu"
 	cmdPing := exec.Command("ping", "-n", "1", "-w", "400", ip)
+	cmdPing.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if out, err := cmdPing.Output(); err == nil {
 		if strings.Contains(string(out), "TTL=") {
 			parts := strings.Split(string(out), "TTL=")
@@ -214,6 +237,7 @@ func getHostDetails(ip string) (string, string, string) {
 		}
 	}
 	cmdArp := exec.Command("arp", "-a", ip)
+	cmdArp.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if out, err := cmdArp.Output(); err == nil {
 		for _, line := range strings.Split(string(out), "\n") {
 			if strings.Contains(line, ip) {
@@ -408,7 +432,7 @@ func (a *App) ScanNetwork(target string, portsStr string, showInfo bool, usePing
 	if autoExportFormat != "none" && exportPath != "" && len(allResults) > 0 && scanCtx.Err() == nil {
 		os.MkdirAll(exportPath, os.ModePerm)
 		if autoExportFormat == "csv" || autoExportFormat == "both" {
-			fileName := filepath.Join(exportPath, fmt.Sprintf("netbuddy_scan_%d.csv", time.Now().Unix()))
+			fileName := filepath.Join(exportPath, fmt.Sprintf("omnitool_scan_%d.csv", time.Now().Unix()))
 			file, err := os.Create(fileName)
 			if err == nil {
 				defer file.Close()

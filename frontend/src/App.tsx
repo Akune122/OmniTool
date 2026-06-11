@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ScanNetwork, SaveSettings, LoadSettings, StopScan, GenerateHTMLReport, GetSavedReports, OpenReport, DeleteReport } from "../wailsjs/go/main/App";
-import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
-import { Quit, WindowMinimise } from "../wailsjs/runtime/runtime";
+import { EventsOn, EventsOff, Quit, WindowMinimise } from "../wailsjs/runtime/runtime";
 import './App.css';
 
 interface ScanResult {
@@ -22,19 +21,16 @@ function App() {
   const [ports, setPorts] = useState("21,22,23,25,53,80,110,135,139,143,443,445,3306,3389,8080");
   const [showInfo, setShowInfo] = useState(true);
   const [usePingSweep, setUsePingSweep] = useState(true);
-  
-  // Intensité du scan 
   const [scanIntensity, setScanIntensity] = useState("normal");
-  
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState<ScanResult[]>([]);
 
-  // Paramètres (Base)
+  // Paramètres
   const [timeoutMs, setTimeoutMs] = useState(500);
   const [maxThreads, setMaxThreads] = useState(500);
   const [highContrast, setHighContrast] = useState(false);
   const [uiSize, setUiSize] = useState("Normale (100%)");
-  const [defaultExportPath, setDefaultExportPath] = useState("C:\\Exports\\OmniTool"); 
+  const [defaultExportPath, setDefaultExportPath] = useState("C:\\Exports\\OmniTool");
   const [autoExportFormat, setAutoExportFormat] = useState("none");
   const [saveMessage, setSaveMessage] = useState("");
 
@@ -71,22 +67,18 @@ function App() {
 
   const startScan = async () => {
     setIsScanning(true); setResults([]); 
-    
-
     let finalTimeout = Number(timeoutMs);
     let finalThreads = Number(maxThreads);
 
     if (scanIntensity === "stealth") {
-      finalTimeout = 1500; 
-      finalThreads = 10;   
+      finalTimeout = 1500;
+      finalThreads = 10;
     } else if (scanIntensity === "aggressive") {
-      finalTimeout = 200;  
-      finalThreads = 2000; 
+      finalTimeout = 200;
+      finalThreads = 2000;
     }
 
-    try { 
-      await ScanNetwork(target, ports, showInfo, usePingSweep, finalTimeout, finalThreads, defaultExportPath, autoExportFormat); 
-    } 
+    try { await ScanNetwork(target, ports, showInfo, usePingSweep, finalTimeout, finalThreads, defaultExportPath, autoExportFormat); } 
     catch (error) { console.error(error); } finally { setIsScanning(false); }
   };
 
@@ -102,7 +94,8 @@ function App() {
       <nav className="sidebar">
         <div className="brand">
           <h2>OmniTool</h2>
-          <span className="version">v1.0.0</span>
+          {/* VERSION MISE A JOUR EN v1.0.1 */}
+          <span className="version">v1.0.1</span>
         </div>
         <ul className="nav-links">
           <li className={activeView === 'scanner' ? 'active' : ''} onClick={() => setActiveView('scanner')}>[ RECONNAISSANCE ]</li>
@@ -120,8 +113,6 @@ function App() {
             {activeView === 'reports' && "DATA CENTER MANAGEMENT"}
             {activeView === 'settings' && "GLOBAL ENGINE CONFIGURATION"}
           </h1>
-          
-          {/* NOS NOUVEAUX BOUTONS WINDOWS CUSTOMISÉS */}
           <div className="window-controls no-drag">
             <button onClick={WindowMinimise}>-</button>
             <button className="close-btn" onClick={Quit}>X</button>
@@ -142,8 +133,6 @@ function App() {
                   <div className="checkbox-group"><input type="checkbox" id="ping-sweep" checked={usePingSweep} onChange={(e) => setUsePingSweep(e.target.checked)} /><label htmlFor="ping-sweep">Enable Ping Sweep (Ignore Dead Hosts)</label></div>
                   <div className="checkbox-group"><input type="checkbox" id="info-check" checked={showInfo} onChange={(e) => setShowInfo(e.target.checked)} /><label htmlFor="info-check">Deep Inspection (Banners & Hostnames)</label></div>
                 </div>
-
-                {/* NOUVEAU : INTENSITÉ DU SCAN */}
                 <div className="input-group" style={{ maxWidth: '200px' }}>
                   <label>SCAN INTENSITY</label>
                   <select value={scanIntensity} onChange={(e) => setScanIntensity(e.target.value)}>
@@ -152,9 +141,8 @@ function App() {
                     <option value="aggressive">AGGRESSIVE (Hard/Fast)</option>
                   </select>
                 </div>
-
                 <div className="input-group" style={{ maxWidth: '150px' }}>
-                  <label>AUTO EXPORT</label>
+                  <label>AUTOMATIC EXPORT</label>
                   <select value={autoExportFormat} onChange={(e) => setAutoExportFormat(e.target.value)}><option value="none">Disabled</option><option value="csv">CSV Format</option><option value="html">HTML Format</option><option value="both">CSV + HTML</option></select>
                 </div>
               </div>
@@ -205,27 +193,12 @@ function App() {
             </div>
             <div className="control-panel" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               {activeSettingsTab === 'engine' && (<><div className="input-group" style={{ marginBottom: '15px' }}><label>TCP HANDSHAKE TIMEOUT (MS)</label><input type="number" value={timeoutMs} onChange={(e) => setTimeoutMs(Number(e.target.value))} /></div><div className="input-group" style={{ marginBottom: '20px' }}><label>CONCURRENT SEMAPHORE LIMIT (THREADS)</label><input type="number" value={maxThreads} onChange={(e) => setMaxThreads(Number(e.target.value))} /></div></>)}
-              
-              {/* MODIFICATION DE LA PARTIE VISUELLE EN "OFFLINE" */}
-              {activeSettingsTab === 'interface' && (
-                <div style={{ padding: '20px', border: '1px dashed #333', width: '100%', textAlign: 'center' }}>
-                  <h3 style={{ color: '#888', letterSpacing: '2px', margin: '0 0 10px 0' }}>MODULE OFFLINE</h3>
-                  <p style={{ color: '#555', fontFamily: 'monospace', margin: 0 }}>Visual customization deployment is scheduled for v1.1.0.</p>
-                </div>
-              )}
-
+              {activeSettingsTab === 'interface' && (<div style={{ padding: '20px', border: '1px dashed #333', width: '100%', textAlign: 'center' }}><h3 style={{ color: '#888', letterSpacing: '2px', margin: '0 0 10px 0' }}>MODULE OFFLINE</h3><p style={{ color: '#555', fontFamily: 'monospace', margin: 0 }}>Visual customization deployment is scheduled for v1.2.0.</p></div>)}
               {activeSettingsTab === 'export' && (<><div className="input-group" style={{ marginBottom: '20px', width: '100%' }}><label>TARGET CONSOLE EXPORT PATH</label><input type="text" value={defaultExportPath} onChange={(e) => setDefaultExportPath(e.target.value)} /></div></>)}
-              
-              {activeSettingsTab !== 'interface' && (
-                <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '15px' }}>
-                  <button className="scan-btn" onClick={handleSaveSettings}>WRITE CHANGES</button>
-                  {saveMessage && <span style={{ color: 'var(--accent)', fontFamily: 'monospace' }}>{saveMessage}</span>}
-                </div>
-              )}
+              {activeSettingsTab !== 'interface' && (<div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '15px' }}><button className="scan-btn" onClick={handleSaveSettings}>WRITE CHANGES</button>{saveMessage && <span style={{ color: 'var(--accent)', fontFamily: 'monospace' }}>{saveMessage}</span>}</div>)}
             </div>
           </div>
         )}
-
         {activeView === 'audit' && (<div className="view-content empty-view"><h2>CRITICAL MODULE OFFLINE</h2><p>Local audit mechanisms are pending compilation.</p></div>)}
       </main>
     </div>

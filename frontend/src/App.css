@@ -4,10 +4,25 @@
   --border-color: #1f1f24;  
   --text-main: #d1d5db;     
   --text-muted: #52525b;    
-  
   --accent: #00ffcc;        
   --accent-bg: #091f1b;     
-  
+}
+
+/* NOUVEAU : Destruction définitive de la scrollbar blanche Windows */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+  border-left: 1px solid var(--border-color);
+}
+::-webkit-scrollbar-thumb {
+  background: #18181b;
+  border: 1px solid var(--border-color);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 
 body {
@@ -41,57 +56,32 @@ body {
 .nav-links li.active { color: var(--accent); background-color: var(--accent-bg); border-left: 2px solid var(--accent); font-weight: bold; }
 
 .main-content { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-deep); }
+
 .topbar { 
   padding: 15px 30px; 
   border-bottom: 1px solid var(--border-color); 
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
 }
 .topbar h1 { margin: 0; font-size: 0.85rem; color: var(--text-muted); letter-spacing: 2px; font-weight: 600; }
 
-.drag-region {
-  --wails-draggable: drag;
-  user-select: none;
-}
-.no-drag {
-  --wails-draggable: no-drag;
-}
+.drag-region { --wails-draggable: drag; user-select: none; }
+.no-drag { --wails-draggable: no-drag; }
 
-.window-controls {
-  display: flex;
-  gap: 8px;
-}
-
+.window-controls { display: flex; gap: 8px; }
 .window-controls button {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  font-family: 'Consolas', monospace;
-  font-size: 0.8rem;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 0;
+  background: transparent; border: 1px solid var(--border-color); color: var(--text-muted);
+  font-family: 'Consolas', monospace; font-size: 0.8rem; width: 32px; height: 32px; cursor: pointer; transition: all 0.2s;
 }
+.window-controls button:hover { border-color: var(--accent); color: var(--accent); background-color: var(--accent-bg); }
+.window-controls .close-btn:hover { border-color: #ef4444; color: #ef4444; background-color: #240c0c; }
 
-.window-controls button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background-color: var(--accent-bg);
-}
-
-.window-controls .close-btn:hover {
-  border-color: #ef4444;
-  color: #ef4444;
-  background-color: #240c0c;
-}
 .view-content { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+.empty-view { align-items: center; justify-content: center; text-align: center; color: #444; font-family: 'Consolas', monospace; letter-spacing: 1px; }
 
 .control-panel {
-  background-color: var(--bg-panel);
-  padding: 25px; border: 1px solid var(--border-color);
+  background-color: var(--bg-panel); padding: 25px; border: 1px solid var(--border-color);
   display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;
 }
 
@@ -105,7 +95,6 @@ body {
 
 .checkbox-group { display: flex; align-items: center; gap: 10px; }
 .checkbox-group label { font-size: 0.75rem; color: var(--text-main); font-family: 'Consolas', monospace; cursor: pointer; }
-.checkbox-group input { cursor: pointer; }
 
 .scan-btn {
   background-color: transparent; color: var(--accent); border: 1px solid var(--accent);
@@ -118,7 +107,6 @@ body {
 .stop-btn:hover:not(:disabled) { background-color: #ef4444; color: #fff; }
 .manual-btn { border-color: #8b5cf6; color: #8b5cf6; }
 .manual-btn:hover:not(:disabled) { background-color: #8b5cf6; color: #fff; }
-
 
 .results-container { margin-top: 25px; flex: 1; background-color: var(--bg-panel); border: 1px solid var(--border-color); }
 .empty-state { display: flex; height: 100%; align-items: center; justify-content: center; color: var(--text-muted); font-family: 'Consolas', monospace; font-size: 0.8rem; letter-spacing: 1px; }
