@@ -311,3 +311,10 @@ Unauthorized scanning may violate local laws, regulations, or organizational pol
 
 ---
 
+## Author
+
+Developed and maintained by **Akune122**.
+
+GitHub: https://github.com/Akune122
+
+---
