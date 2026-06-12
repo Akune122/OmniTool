@@ -6,6 +6,10 @@ export function DeleteReport(arg1) {
   return window['go']['main']['App']['DeleteReport'](arg1);
 }
 
+export function ExportAuditReport(arg1, arg2) {
+  return window['go']['main']['App']['ExportAuditReport'](arg1, arg2);
+}
+
 export function GenerateHTMLReport(arg1, arg2) {
   return window['go']['main']['App']['GenerateHTMLReport'](arg1, arg2);
 }
@@ -20,6 +24,10 @@ export function LoadSettings() {
 
 export function OpenReport(arg1) {
   return window['go']['main']['App']['OpenReport'](arg1);
+}
+
+export function RunSystemAudit() {
+  return window['go']['main']['App']['RunSystemAudit']();
 }
 
 export function SaveSettings(arg1) {

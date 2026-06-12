@@ -1,5 +1,27 @@
 export namespace main {
 	
+	export class AuditResult {
+	    category: string;
+	    control_name: string;
+	    status: string;
+	    result: string;
+	    recommendation: string;
+	    command: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AuditResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.category = source["category"];
+	        this.control_name = source["control_name"];
+	        this.status = source["status"];
+	        this.result = source["result"];
+	        this.recommendation = source["recommendation"];
+	        this.command = source["command"];
+	    }
+	}
 	export class ReportFile {
 	    name: string;
 	    path: string;

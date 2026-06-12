@@ -4,6 +4,8 @@ import {main} from '../models';
 
 export function DeleteReport(arg1:string):Promise<string>;
 
+export function ExportAuditReport(arg1:Array<main.AuditResult>,arg2:string):Promise<string>;
+
 export function GenerateHTMLReport(arg1:Array<main.ScanResult>,arg2:string):Promise<string>;
 
 export function GetSavedReports(arg1:string):Promise<Array<main.ReportFile>>;
@@ -11,6 +13,8 @@ export function GetSavedReports(arg1:string):Promise<Array<main.ReportFile>>;
 export function LoadSettings():Promise<main.Settings>;
 
 export function OpenReport(arg1:string):Promise<string>;
+
+export function RunSystemAudit():Promise<Array<main.AuditResult>>;
 
 export function SaveSettings(arg1:main.Settings):Promise<string>;
 
